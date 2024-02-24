@@ -15,6 +15,7 @@ export default class Settings {
   static SEND_CHAT_TO_ACTOR_OWNER = 'sendChatToActorOwner';
   static SHOW_CHAT_MESSAGE_EFFECT_DESCRIPTION = 'chatMessageEffectDescription';
   static SHOW_NESTED_EFFECTS = 'showNestedEffects';
+  static SHOW_SIDEBAR_EFFECTS = 'showSidebarEffects';
   static STATUS_EFFECTS_SORT_ORDER = 'statusEffectsSortOrder';
   static ADD_CHAT_BUTTON = 'addChatButton';
 
@@ -207,6 +208,16 @@ export default class Settings {
       default: false,
       type: Boolean,
     });
+
+    game.settings.register(Constants.MODULE_ID, Settings.SHOW_SIDEBAR_EFFECTS, {
+      name: 'Enable Effects Sidebar Tab',
+      hint: 'Add a new tab to the sidebar that allows you to browse effects.',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+      requiresReload: true,
+    });
   }
 
   _registerNonConfigSettings() {
@@ -395,6 +406,15 @@ export default class Settings {
    */
   get showNestedEffects() {
     return game.settings.get(Constants.MODULE_ID, Settings.SHOW_NESTED_EFFECTS);
+  }
+
+  /**
+   * Returns the game setting for showing effect sidebar directory
+   *
+   * @returns {boolean} true if effect sidebar directory should be shown
+   */
+  get showSidebarEffects() {
+    return game.settings.get(Constants.MODULE_ID, Settings.SHOW_SIDEBAR_EFFECTS);
   }
 
   /**

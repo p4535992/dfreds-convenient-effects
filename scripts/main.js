@@ -49,6 +49,18 @@ Hooks.once('ready', async () => {
 
     await settings.setCustomEffectsItemId(item.id);
   }
+
+  if (game.settings.get(Constants.MODULE_ID, Settings.SHOW_SIDEBAR_EFFECTS)) {
+    const sidebarWidth = parseFloat(getComputedStyle(document.querySelector("#sidebar #sidebar-tabs")).getPropertyValue("--sidebar-tab-width").replace("px", "").trim());
+    document.querySelector("#sidebar #sidebar-tabs").style.setProperty("--sidebar-tab-width", sidebarWidth - 2 + "px");
+    const app = new ConvenientEffectsApp();
+    app.render(false);
+    app.tabName = "effects";
+    ui.effects = app;
+    $(document).on("click", "#sidebar #sidebar-tabs [data-tab='effects']", (event) => {;
+      ui.effects.render(true);
+    });
+  }
 });
 
 /**
@@ -309,3 +321,38 @@ Hooks.on('renderChatMessage', (message, html) => {
     }
   }
 });
+
+Hooks.on("renderSidebar", (app, html, tabs, c) => {
+  if (game.settings.get(Constants.MODULE_ID, Settings.SHOW_SIDEBAR_EFFECTS)) {
+    // Ty to arcanist for this
+      html.find("#sidebar-tabs a[data-tab='items']").after(`
+    <a class="item" data-tab="effects" data-tooltip="Effects" alt="Effects">
+              <i class="fas fa-hand-sparkles"></i>
+    </a>
+    `);
+  }
+});
+
+// Hook into the sidebar tab rendering
+Hooks.on("renderEffectDirectory", (doc, html) => {
+	// If we are rendering the "effects" sidebar tab
+	if (doc.tabName === "effects") {
+		// Create the Effect directory
+		createDirectory(html[0]);
+	}
+});
+
+/**
+ * Create the Macro directory in the sidebar
+ * @param {HTMLElement} html - The html element of the Macro sidebar tab
+ */
+const createDirectory = html => {
+	// Move Macros directory to sidebar if there isn't already one there
+	if (document.querySelectorAll("#effects").length <= 1) document.querySelector("#sidebar").append(html);
+
+	document.querySelector("#effects").classList.add("tab");
+
+	// Make the directory display properly and not all of the time
+	html.style.display = "";
+};
+
